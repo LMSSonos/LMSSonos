@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Presentation>
+    <!-- BrowseOptions allow for an override of standard
+         browse operations in the controller. The setting
+         below will force the controller to ask for 50
+         items in each getMedata request. -->
+    <BrowseOptions PageSize="50" />
+    <PresentationMap type="DisplayType">
+        <DisplayType id="gridAlbum">
+            <DisplayMode>GRID</DisplayMode>
+            <Lines>
+                <Line token="title"/>
+                <Line token="artist"/>
+            </Lines>
+        </DisplayType>
+        <DisplayType id="albumTracks">
+            <DisplayMode>LINE</DisplayMode>
+            <Lines>
+                <Line token="title"/>
+            </Lines>
+        </DisplayType>
+        <DisplayType id="albumTracksCompilation">
+            <DisplayMode>LINE</DisplayMode>
+            <Lines>
+                <Line token="title"/>
+                <Line token="artist"/>
+            </Lines>
+        </DisplayType>
+    </PresentationMap>
+    <PresentationMap type="Search">
+    <Match>
+        <SearchCategories>
+            <Category mappedId="artist" id="artists"/>
+            <Category mappedId="album" id="albums"/>
+            <Category mappedId="track" id="tracks"/>
+        </SearchCategories>
+    </Match>
+</PresentationMap>
+</Presentation>
+
