@@ -68,6 +68,7 @@ class SonosService {
 			var abs2 = new MediaCollectionEntry();
 			abs2.id = "genres"
 			abs2.title = "Genre";
+			abs2.itemType = "collection";
 			response.mediaCollection.push(abs2)
 			return response;
 		}
