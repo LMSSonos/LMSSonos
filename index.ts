@@ -138,7 +138,7 @@ class SonosService {
 
 	public getMediaURI(id: string) {
 		var finalId = id.substr(6);
-		return "http://192.168.178.139:9002/music/" + finalId + "/download/01.%20White%20Room.flac";
+		return  Config.LMSUrl + "/music/" + finalId + "/download/01.%20White%20Room.flac";
 	}
 
 	public search(id: string, term: string, index: number, count: number): mediaList {
