@@ -61,7 +61,7 @@ class SonosService {
 			var abs1 = new MediaCollectionEntry();
 			abs1.id = "newmusic"
 			abs1.title = "New music";
-			abs1.itemType = "collection";
+			abs1.itemType = "albumList";
 			abs1.displayType = "gridAlbum";
 			response.mediaCollection.push(abs1)
 
@@ -241,8 +241,8 @@ class SonosService {
 			var abs1 = new MediaCollectionEntry();
 			abs1.id = "genre-" + genre.ID;
 			abs1.displayType = "gridAlbum";
+			abs1.itemType ="albumList";
 			abs1.title = this.safeTitle(genre.Genre);
-			abs1.itemType = "genre";
 			abs1.canPlay = false;
 			abs1.canAddToFavorites = false;
 			abs1.trackMetadata = new TrackMetadata();
