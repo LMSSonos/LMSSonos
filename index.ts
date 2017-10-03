@@ -1,20 +1,20 @@
 /// this is the main server file, contains the bindings for the calls and the mappings
 var soap = require('soap-server');
-import {Config} from "./config";
-import {LMSServer} from "./lmsserver";
-import {Album} from "./lmsserverpocos";
-import {AlbumResult} from "./lmsserverpocos";
-import {Track} from "./lmsserverpocos";
-import {TrackResult} from "./lmsserverpocos";
-import {Contributor} from "./lmsserverpocos";
-import {SearchResult} from "./lmsserverpocos";
-import {TrackMetadata} from "./sonospocos";
-import {AbstractMedia} from "./sonospocos";
-import {MediaCollectionEntry} from "./sonospocos";
-import {mediaList} from "./sonospocos";
-import {lastUpdate} from "./sonospocos";
-import {Genre} from "./lmsserverpocos";
-import {GenreResult} from "./lmsserverpocos";
+import { Config } from "./config";
+import { LMSServer } from "./lmsserver";
+import { Album } from "./lmsserverpocos";
+import { AlbumResult } from "./lmsserverpocos";
+import { Track } from "./lmsserverpocos";
+import { TrackResult } from "./lmsserverpocos";
+import { Contributor } from "./lmsserverpocos";
+import { SearchResult } from "./lmsserverpocos";
+import { TrackMetadata } from "./sonospocos";
+import { AbstractMedia } from "./sonospocos";
+import { MediaCollectionEntry } from "./sonospocos";
+import { mediaList } from "./sonospocos";
+import { lastUpdate } from "./sonospocos";
+import { Genre } from "./lmsserverpocos";
+import { GenreResult } from "./lmsserverpocos";
 
 
 class SonosService {
@@ -83,6 +83,8 @@ class SonosService {
 	}
 
 	safeTitle(str: string) {
+		if (str == undefined || str == null)
+			return "";
 		return this.safeLenght(str, 64);
 	}
 
@@ -99,22 +101,27 @@ class SonosService {
 	public getMediaMetadata(id: string) {
 
 		var lms = new LMSServer();
-		var track: Track = lms.ListTrack(id.substr(6));
+		var track: Track = lms.ListTrack(id.substr(6));		
 		var res = new AbstractMedia();
 		res.id = id;
-		res.title = this.safeTitle(track.Title);
+		res.title = "";
 		res.itemType = "track";
 		res.genre = "Pop meta";
 		res.mimeType = "audio/flac";
 		//res.artist = this.safeArtist(track.Artist);
-		res.trackMetadata = new TrackMetadata();
-		res.trackMetadata.artist = this.safeArtist(track.Artist);
-		res.trackMetadata.duration = track.Duration;
-		res.trackMetadata.albumArtURI = track.Artwork
-		res.trackMetadata.genre = "Pop meta";
-		res.trackMetadata.albumArtist = this.safeArtist(track.Artist);
-		res.trackMetadata.id = id;
-		return res;
+		if (track != null) {
+			if (track.Title != null)
+				res.title = this.safeTitle(track.Title);
+			res.trackMetadata = new TrackMetadata();
+			res.trackMetadata.artist = this.safeArtist(track.Artist);
+			res.trackMetadata.duration = track.Duration;
+			res.trackMetadata.albumArtURI = track.Artwork
+			res.trackMetadata.genre = "Pop meta";
+			res.trackMetadata.albumArtist = this.safeArtist(track.Artist);
+			res.trackMetadata.id = id;
+		}
+		else
+			return res;
 	}
 
 	public getExtendedMetadata(id: string) {
@@ -122,7 +129,22 @@ class SonosService {
 		var track: Track = lms.ListTrack(id.substr(6));
 		var res = new AbstractMedia();
 		res.id = id;
-		res.title = this.safeTitle(track.Title);
+		if (track == null || track == undefined) {			
+			console.log("lms.ListTrack returned null for album "+ id.substr(6));
+			res.title = "";
+			res.itemType = "track";
+			res.genre = "Pop meta";
+			res.mimeType = "audio/flac";
+			res.title = "error";
+			res.artist = "error";
+			return res;
+		}
+
+
+		if (track.Title != null)
+			res.title = this.safeTitle(track.Title);
+		else
+			res.title = "";
 		res.itemType = "track";
 		res.genre = "Pop meta";
 		res.mimeType = "audio/flac";
@@ -139,7 +161,7 @@ class SonosService {
 
 	public getMediaURI(id: string) {
 		var finalId = id.substr(6);
-		return  Config.LMSUrl + "/music/" + finalId + "/download/01.%20White%20Room.flac";
+		return Config.LMSUrl + "/music/" + finalId + "/download/01.%20White%20Room.flac";
 	}
 
 	public search(id: string, term: string, index: number, count: number): mediaList {
@@ -242,7 +264,7 @@ class SonosService {
 			var abs1 = new MediaCollectionEntry();
 			abs1.id = "genre-" + genre.ID;
 			abs1.displayType = "gridAlbum";
-			abs1.itemType ="albumList";
+			abs1.itemType = "albumList";
 			abs1.title = this.safeTitle(genre.Genre);
 			abs1.canPlay = false;
 			abs1.canAddToFavorites = false;

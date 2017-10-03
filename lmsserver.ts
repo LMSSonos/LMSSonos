@@ -1,15 +1,15 @@
 /// This is the proxy that calls LMS rpc and maps it to objects to return it to sonos
 import request = require('sync-request');
-import {Config} from "./config";
-import {Album} from "./lmsserverpocos";
-import {AlbumResult} from "./lmsserverpocos";
-import {Track} from "./lmsserverpocos";
-import {Contributor} from "./lmsserverpocos";
-import {SearchResult} from "./lmsserverpocos";
-import {Genre} from "./lmsserverpocos";
-import {GenreResult} from "./lmsserverpocos";
+import { Config } from "./config";
+import { Album } from "./lmsserverpocos";
+import { AlbumResult } from "./lmsserverpocos";
+import { Track } from "./lmsserverpocos";
+import { Contributor } from "./lmsserverpocos";
+import { SearchResult } from "./lmsserverpocos";
+import { Genre } from "./lmsserverpocos";
+import { GenreResult } from "./lmsserverpocos";
 
-import {TrackResult} from "./lmsserverpocos";
+import { TrackResult } from "./lmsserverpocos";
 
 var lmsUrl = Config.LMSUrl;
 var lmsUrlRPC = lmsUrl + "/jsonrpc.js";
@@ -54,19 +54,28 @@ export class LMSServer {
             body: jsonData
         }
 
-        var res = request('POST', lmsUrlRPC, options);
-        var body = res.getBody('utf8');
-        //console.log(body);
-        var tracks: Track[];
-        tracks = [];
+        try {
+            var res = request('POST', lmsUrlRPC, options);
+            var body = res.getBody('utf8');
+            //console.log(body);
+            var tracks: Track[];
+            tracks = [];
 
-        JSON.parse(body).result.titles_loop.forEach(element => {
-            var coverUrl = lmsUrl + "/music/" + element.artwork_track_id + "/cover.jpg";
-            tracks.push({ ID: element.id, TrackNumber: element.tracknum, Title: element.title, Artist: element.artist, Artwork: coverUrl, Duration: Math.round(element.duration) });
-        });
-
-
-        return tracks[0];
+            if (JSON.parse(body).result.titles_loop != undefined) {
+                JSON.parse(body).result.titles_loop.forEach(element => {
+                    var coverUrl = lmsUrl + "/music/" + element.artwork_track_id + "/cover.jpg";
+                    tracks.push({ ID: element.id, TrackNumber: element.tracknum, Title: element.title, Artist: element.artist, Artwork: coverUrl, Duration: Math.round(element.duration) });
+                });
+                return tracks[0];
+            }
+            else
+                return null;
+        }
+        catch(exception)
+        {
+            console.log("ListtrackException: " + exception);
+            return null;
+        }
     }
 
 
